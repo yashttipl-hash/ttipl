@@ -1,0 +1,114 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    function isSignedIn() {
+      return request.auth != null;
+    }
+
+    function isValidId(id) {
+      return id is string && id.size() > 0 && id.size() <= 64 && id.matches('^[a-zA-Z0-9_\\-]+$');
+    }
+
+    function isValidIncentive(data) {
+      return data.keys().hasAll([
+          'id', 'governmentLevel', 'state', 'location',
+          'company', 'businessSegment', 'incentiveCategory',
+          'policyScheme', 'status', 'priority', 'targetDate', 'rag'
+        ])
+        && data.keys().hasOnly([
+          'id', 'governmentLevel', 'state', 'location',
+          'company', 'businessSegment', 'incentiveType', 'incentiveCategory',
+          'policyScheme', 'status', 'priority', 'benefitSummary',
+          'keyEligibility', 'source', 'owner', 'nextAction',
+          'targetDate', 'rag'
+        ])
+        && data.id is string && data.id.size() > 0 && data.id.size() <= 64 && data.id.matches('^[a-zA-Z0-9_\\-]+$')
+        && data.governmentLevel in ['State', 'Central']
+        && data.state is string && data.state.size() <= 100
+        && data.location is string && data.location.size() <= 100
+        && data.company is string && data.company.size() <= 100
+        && data.businessSegment is string && data.businessSegment.size() <= 100
+        && (!('incentiveType' in data) || (data.incentiveType is string && data.incentiveType.size() <= 200))
+        && data.incentiveCategory is string && data.incentiveCategory.size() <= 100
+        && data.policyScheme is string && data.policyScheme.size() <= 500
+        && data.status in ['Applicable', 'Application Required', 'Under Assessment', 'Claimed', 'Approved']
+        && data.priority in ['High', 'Medium', 'Targeted', 'Low']
+        && (!('benefitSummary' in data) || (data.benefitSummary is string && data.benefitSummary.size() <= 2000))
+        && (!('keyEligibility' in data) || (data.keyEligibility is string && data.keyEligibility.size() <= 2000))
+        && (!('source' in data) || (data.source is string && data.source.size() <= 500))
+        && (!('owner' in data) || (data.owner is string && data.owner.size() <= 100))
+        && (!('nextAction' in data) || (data.nextAction is string && data.nextAction.size() <= 1000))
+        && data.targetDate is string && data.targetDate.size() <= 20
+        && data.rag in ['Green', 'Amber', 'Red'];
+    }
+
+    function isValidActionItem(data) {
+      return data.keys().hasAll([
+          'actionId', 'state', 'location', 'company',
+          'businessSegment', 'incentiveType', 'currentStatus',
+          'priority', 'owner', 'nextAction', 'targetDate', 'rag'
+        ])
+        && data.keys().hasOnly([
+          'actionId', 'state', 'location', 'company',
+          'businessSegment', 'incentiveType', 'currentStatus',
+          'priority', 'owner', 'nextAction', 'targetDate', 'rag'
+        ])
+        && data.actionId is string && data.actionId.size() > 0 && data.actionId.size() <= 64 && data.actionId.matches('^[a-zA-Z0-9_\\-]+$')
+        && data.state is string && data.state.size() <= 100
+        && data.location is string && data.location.size() <= 100
+        && data.company is string && data.company.size() <= 100
+        && data.businessSegment is string && data.businessSegment.size() <= 100
+        && data.incentiveType is string && data.incentiveType.size() <= 200
+        && data.currentStatus in ['Applicable', 'Application Required', 'Under Assessment', 'Claimed', 'Approved']
+        && data.priority in ['High', 'Medium', 'Targeted', 'Low']
+        && data.owner is string && data.owner.size() <= 100
+        && data.nextAction is string && data.nextAction.size() <= 1000
+        && data.targetDate is string && data.targetDate.size() <= 20
+        && data.rag in ['Green', 'Amber', 'Red'];
+    }
+
+    function isValidAuditLog(data) {
+      return data.keys().hasAll([
+          'id', 'timestamp', 'userEmail', 'action', 'recordId'
+        ])
+        && data.id is string && data.id.size() > 0 && data.id.size() <= 64 && data.id.matches('^[a-zA-Z0-9_\\-]+$')
+        && data.timestamp is string && data.timestamp.size() <= 64
+        && data.userEmail is string && data.userEmail.size() <= 256
+        && data.action in ['Added', 'Updated', 'Deleted']
+        && data.recordId is string && data.recordId.size() <= 256
+        && (!('details' in data) || (data.details is string && data.details.size() <= 2000))
+        && (!('summary' in data) || (data.summary is string && data.summary.size() <= 2000));
+    }
+
+    match /incentives/{incentiveId} {
+      allow read: if true;
+      allow create: if isValidId(incentiveId) && isValidIncentive(request.resource.data);
+      allow update: if isValidId(incentiveId) && isValidIncentive(request.resource.data);
+      allow delete: if isValidId(incentiveId);
+    }
+
+    match /actions/{actionId} {
+      allow read: if true;
+      allow create: if isValidId(actionId) && isValidActionItem(request.resource.data);
+      allow update: if isValidId(actionId) && isValidActionItem(request.resource.data);
+      allow delete: if isValidId(actionId);
+    }
+
+    match /auditLogs/{logId} {
+      allow read: if true;
+      allow create: if isValidId(logId) && isValidAuditLog(request.resource.data);
+      allow update: if false;
+      allow delete: if false;
+    }
+
+    match /userCredentials/{credId} {
+      allow read: if true;
+      allow create, update: if true;
+      allow delete: if false;
+    }
+
+    match /{document=**} {
+      allow read, write: if isSignedIn();
+    }
+  }
+}

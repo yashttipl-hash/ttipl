@@ -1,0 +1,303 @@
+{
+  "entities": {
+    "Incentive": {
+      "title": "Incentive",
+      "description": "Government policy and incentive scheme record for Toyota Tsusho Group India.",
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string",
+          "pattern": "^[a-zA-Z0-9_\\-]+$",
+          "maxLength": 64,
+          "description": "Unique identifier for the incentive (e.g. IM-001)"
+        },
+        "governmentLevel": {
+          "type": "string",
+          "enum": ["State", "Central"],
+          "description": "Level of government issuing the incentive"
+        },
+        "state": {
+          "type": "string",
+          "maxLength": 100,
+          "description": "State where the incentive is applicable"
+        },
+        "location": {
+          "type": "string",
+          "maxLength": 100,
+          "description": "Operating location or industrial zone"
+        },
+        "company": {
+          "type": "string",
+          "maxLength": 100,
+          "description": "Toyota Tsusho Group entity"
+        },
+        "businessSegment": {
+          "type": "string",
+          "maxLength": 100,
+          "description": "Industry business segment"
+        },
+        "incentiveType": {
+          "type": "string",
+          "maxLength": 200,
+          "description": "Type of incentive benefit"
+        },
+        "incentiveCategory": {
+          "type": "string",
+          "maxLength": 100,
+          "description": "Policy category grouping"
+        },
+        "policyScheme": {
+          "type": "string",
+          "maxLength": 500,
+          "description": "Official policy scheme title"
+        },
+        "status": {
+          "type": "string",
+          "enum": ["Applicable", "Application Required", "Under Assessment", "Claimed", "Approved"],
+          "description": "Current status of the incentive claim"
+        },
+        "priority": {
+          "type": "string",
+          "enum": ["High", "Medium", "Targeted", "Low"],
+          "description": "Strategic priority level"
+        },
+        "benefitSummary": {
+          "type": "string",
+          "maxLength": 2000,
+          "description": "Summary of benefits"
+        },
+        "keyEligibility": {
+          "type": "string",
+          "maxLength": 2000,
+          "description": "Key criteria to qualify for the scheme"
+        },
+        "source": {
+          "type": "string",
+          "maxLength": 500,
+          "description": "Document source or notification reference"
+        },
+        "owner": {
+          "type": "string",
+          "maxLength": 100,
+          "description": "Department or function owning the action"
+        },
+        "nextAction": {
+          "type": "string",
+          "maxLength": 1000,
+          "description": "Immediate required next operational step"
+        },
+        "targetDate": {
+          "type": "string",
+          "maxLength": 20,
+          "description": "Target completion date in YYYY-MM-DD format"
+        },
+        "rag": {
+          "type": "string",
+          "enum": ["Green", "Amber", "Red"],
+          "description": "RAG risk and progress indicator"
+        }
+      },
+      "required": [
+        "id",
+        "governmentLevel",
+        "state",
+        "location",
+        "company",
+        "businessSegment",
+        "incentiveCategory",
+        "policyScheme",
+        "status",
+        "priority",
+        "targetDate",
+        "rag"
+      ]
+    },
+    "ActionItem": {
+      "title": "ActionItem",
+      "description": "Action tracker item for incentive follow-up across Toyota Tsusho Group India.",
+      "type": "object",
+      "properties": {
+        "actionId": {
+          "type": "string",
+          "pattern": "^[a-zA-Z0-9_\\-]+$",
+          "maxLength": 64,
+          "description": "Unique identifier for the action (e.g. ACT-001)"
+        },
+        "state": {
+          "type": "string",
+          "maxLength": 100,
+          "description": "State"
+        },
+        "location": {
+          "type": "string",
+          "maxLength": 100,
+          "description": "Location"
+        },
+        "company": {
+          "type": "string",
+          "maxLength": 100,
+          "description": "Company"
+        },
+        "businessSegment": {
+          "type": "string",
+          "maxLength": 100,
+          "description": "Business segment"
+        },
+        "incentiveType": {
+          "type": "string",
+          "maxLength": 200,
+          "description": "Incentive type"
+        },
+        "currentStatus": {
+          "type": "string",
+          "enum": ["Applicable", "Application Required", "Under Assessment", "Claimed", "Approved"],
+          "description": "Current status"
+        },
+        "priority": {
+          "type": "string",
+          "enum": ["High", "Medium", "Targeted", "Low"],
+          "description": "Priority"
+        },
+        "owner": {
+          "type": "string",
+          "maxLength": 100,
+          "description": "Owner department"
+        },
+        "nextAction": {
+          "type": "string",
+          "maxLength": 1000,
+          "description": "Next action step"
+        },
+        "targetDate": {
+          "type": "string",
+          "maxLength": 20,
+          "description": "Target date YYYY-MM-DD"
+        },
+        "rag": {
+          "type": "string",
+          "enum": ["Green", "Amber", "Red"],
+          "description": "RAG status"
+        }
+      },
+      "required": [
+        "actionId",
+        "state",
+        "location",
+        "company",
+        "businessSegment",
+        "incentiveType",
+        "currentStatus",
+        "priority",
+        "owner",
+        "nextAction",
+        "targetDate",
+        "rag"
+      ]
+    },
+    "AuditLog": {
+      "title": "AuditLog",
+      "description": "Audit trail record tracking who added, updated, or deleted an incentive record.",
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string",
+          "pattern": "^[a-zA-Z0-9_\\-]+$",
+          "maxLength": 64,
+          "description": "Unique identifier for the audit log entry"
+        },
+        "timestamp": {
+          "type": "string",
+          "maxLength": 64,
+          "description": "ISO 8601 timestamp when the change occurred"
+        },
+        "userEmail": {
+          "type": "string",
+          "maxLength": 256,
+          "description": "Email address of the user who made the change"
+        },
+        "action": {
+          "type": "string",
+          "enum": ["Added", "Updated", "Deleted"],
+          "description": "Type of operation performed"
+        },
+        "recordId": {
+          "type": "string",
+          "maxLength": 256,
+          "description": "Identifier(s) of the affected incentive record(s)"
+        },
+        "details": {
+          "type": "string",
+          "maxLength": 2000,
+          "description": "Details of the change made to the record"
+        },
+        "summary": {
+          "type": "string",
+          "maxLength": 2000,
+          "description": "Summary of the change made to the record"
+        }
+      },
+      "required": [
+        "id",
+        "timestamp",
+        "userEmail",
+        "action",
+        "recordId",
+        "details"
+      ]
+    },
+    "UserCredential": {
+      "title": "UserCredential",
+      "description": "Custom password credentials stored for corporate users.",
+      "type": "object",
+      "properties": {
+        "email": {
+          "type": "string",
+          "maxLength": 256,
+          "description": "User corporate email"
+        },
+        "password": {
+          "type": "string",
+          "maxLength": 256,
+          "description": "Updated corporate password"
+        },
+        "updatedAt": {
+          "type": "string",
+          "maxLength": 64,
+          "description": "Timestamp of password update"
+        },
+        "updatedBy": {
+          "type": "string",
+          "maxLength": 256,
+          "description": "Email of user or administrator who changed password"
+        }
+      },
+      "required": ["email", "password"]
+    }
+  },
+  "firestore": {
+    "/incentives/{incentiveId}": {
+      "schema": {
+        "$ref": "#/entities/Incentive"
+      },
+      "description": "Collection of all enterprise incentive intelligence records."
+    },
+    "/actions/{actionId}": {
+      "schema": {
+        "$ref": "#/entities/ActionItem"
+      },
+      "description": "Collection of action tracker records for Toyota Tsusho Group India."
+    },
+    "/auditLogs/{logId}": {
+      "schema": {
+        "$ref": "#/entities/AuditLog"
+      },
+      "description": "Audit log entries capturing all additions, updates, and deletions of incentives."
+    },
+    "/userCredentials/{credId}": {
+      "schema": {
+        "$ref": "#/entities/UserCredential"
+      },
+      "description": "Team member custom credential store for password management."
+    }
+  }
+}
